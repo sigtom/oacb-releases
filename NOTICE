@@ -1,0 +1,10 @@
+OpenShift Agent Configuration Builder (OACB)
+Copyright OACB contributors.
+
+Original OACB code, scripts, documentation and examples are licensed under the
+Apache License, Version 2.0. Third-party components retain their own licenses
+and notices; this license does not relicense the bundled operating system,
+OpenShift installer, oc, NMState, frontend dependencies or Go dependencies.
+
+OACB is a community project. No Red Hat endorsement or product support is
+implied. The Apache License does not grant rights to third-party trademarks.

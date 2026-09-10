@@ -36,6 +36,27 @@ Each packaged release is intended to include the deployment files, verification 
 
 Use the **two immutable digests from one release manifest**, not `latest` or a mixed pair. Public image pulls will not require a GitHub token. Once the release bundle is published, you will not need an application-source checkout to deploy it.
 
+## License and release source
+
+OACB's original code, scripts, documentation and examples are licensed under
+[Apache-2.0](LICENSE). See [NOTICE](NOTICE) for attribution and the distinction
+between OACB and bundled third-party software, which retains its own licenses.
+
+Each packaged release will include an editable `oacb-source.tar` with the
+application source, dependency locks, build recipes and build instructions.
+The release manifest will bind the archive checksum and the exact source
+revision used to build the matching images. Verify the checksums from your
+trusted release acquisition channel before extracting an archive. Building
+from source requires the documented build dependencies; the offline runtime
+bundle does not require a rebuild.
+
+GitHub's automatically generated **Source code (zip/tar.gz)** downloads contain
+this documentation repository. Choose the attached **oacb-source.tar** for the
+application source. The development repository, history and CI remain private;
+public release source archives will contain the inputs needed to edit and build
+the application. The first source archive will be available with the first
+packaged release.
+
 ## Customer data and access
 
 OACB is designed for an operator-controlled network. It has no built-in user accounts or role-based access; deploy it behind HTTPS and choose the appropriate network access policy. Inputs and generated installer workspaces are temporary, so download the artifacts you need before ending the session.
