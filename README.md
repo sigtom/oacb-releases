@@ -1,6 +1,6 @@
 # OpenShift Agent Configuration Builder
 
-OACB helps you turn a customer’s cluster plan into reviewed OpenShift Agent-based Installer configuration. Enter the network and host information in a browser, validate the generated YAML with the pinned installer, then download it for the installation team.
+OACB is built for architects and senior consultants preparing OpenShift installations in customer environments. Its first audience is Red Hat field teams. It helps you turn a customer’s cluster plan into reviewed OpenShift Agent-based Installer configuration. Enter the network and host information in a browser, validate the generated YAML with the pinned installer, then download it for the installation team.
 
 **BMC access is optional.** You can generate `install-config.yaml` and `agent-config.yaml` without contacting a server controller. When access is available, OACB can also help discover hardware, create an Agent ISO, and prepare supported virtual-media boot operations.
 
@@ -23,7 +23,9 @@ Successful YAML validation does not prove that the customer’s DNS, switches, d
 
 ## Get started
 
-Read the [usage guide](docs/usage.md) for the YAML-only workflow, optional ISO creation, and connected or offline deployment.
+Start with the [field guide for Red Hat architects and senior consultants](docs/architects-and-consultants.md) for engagement planning, design review and customer handoff. Use the [engagement worksheet](docs/engagement-worksheet.md) to collect decisions and assign unresolved prerequisites.
+
+The [usage guide](docs/usage.md) covers the operator steps: YAML-only preparation, optional ISO creation, and connected or offline deployment.
 
 Each packaged release is intended to include the deployment files, verification helper, checksums, and a manifest identifying the matching images:
 

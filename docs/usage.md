@@ -1,5 +1,8 @@
 # Using OACB
 
+For customer engagement planning and technical handoff, start with the
+[field guide for architects and consultants](architects-and-consultants.md).
+
 The first packaged release is still being prepared. There is no published version or image digest to substitute into these instructions yet. An existing OACB operator can already use the YAML workflow below; deployment requires the verified release assets described later in this guide.
 
 ## Generate YAML without BMC access
