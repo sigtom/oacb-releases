@@ -1,36 +1,43 @@
-# Repository Template
+# OpenShift Agent Configuration Builder
 
-Private bootstrap template for new `sigtom` repositories using the repository-first Codex contract.
+OACB helps you turn a customer’s cluster plan into reviewed OpenShift Agent-based Installer configuration. Enter the network and host information in a browser, validate the generated YAML with the pinned installer, then download it for the installation team.
 
-This repository provides the minimum structure for a fresh project:
+**BMC access is optional.** You can generate `install-config.yaml` and `agent-config.yaml` without contacting a server controller. When access is available, OACB can also help discover hardware, create an Agent ISO, and prepare supported virtual-media boot operations.
 
-- concise root `AGENTS.md` startup instructions;
-- `docs/development.md` and `docs/security.md`;
-- `.repo-contract.yml` repository policy declaration;
-- `scripts/check_repository_contract.py` structural policy validation;
-- a self-hosted reusable GitHub Actions contract workflow;
-- a tiny local caller workflow suitable for repositories created from this template.
+This repository is the public home for release downloads, deployment instructions, and examples. The first packaged release is being prepared; no downloadable release or public image pair is available yet. The instructions below describe the release workflow and will become usable when its verified assets are published.
 
-The template is intentionally generic. New repositories must replace placeholder project facts with repository-specific purpose, validation commands, branch model, security boundaries, and live-mutation boundaries before feature implementation begins.
+## What you can do
 
-## Default branch model
+- **Prepare configuration:** enter cluster, host, disk, bond, VLAN, routing, DNS, and NTP settings; review and download both installer YAML files.
+- **Validate before handoff:** check field relationships, validate each host’s network configuration with NMState, and run the matching OpenShift Installer’s manifest validation.
+- **Plan for customer networks:** supply connected, proxy-connected, or disconnected mirror and certificate settings.
+- **Use hardware discovery when available:** inspect Redfish inventory and explicitly select which discovered values to apply.
+- **Create installation media:** generate a full or minimal Agent ISO, or take the YAML to a workstation with the matching installer.
+- **Use guarded BMC actions where supported:** review and confirm individual virtual-media and boot operations. Mutation controls are off by default.
 
-The template defaults to:
+## Current scope
 
-```text
-work branch -> dev -> explicit literal dev -> main
-```
+The current MVP targets a three-node compact bare-metal OpenShift **4.21.27** cluster with static IPv4 networking and a disabled provisioning network. The portable application image runs on Linux AMD64.
 
-Projects that intentionally use direct-to-`main` or imported/upstream-mirror models must update `.repo-contract.yml`, `AGENTS.md`, and `docs/development.md` together.
+Successful YAML validation does not prove that the customer’s DNS, switches, disks, firmware, or registry mirrors are correct. A complete real-hardware cluster installation has not yet been established as release acceptance evidence. Other configurations and vendor-specific BMC features should not be assumed to have the same coverage.
 
-## CI rule
+## Get started
 
-GitHub Actions execution must use self-hosted/local runners only. GitHub-hosted labels such as `ubuntu-latest`, `windows-latest`, and `macos-latest` are prohibited.
+Read the [usage guide](docs/usage.md) for the YAML-only workflow, optional ISO creation, and connected or offline deployment.
 
-## Validate
+Each packaged release is intended to include the deployment files, verification helper, checksums, and a manifest identifying the matching images:
 
-```sh
-python3 scripts/check_repository_contract.py
-```
+- `ghcr.io/sigtom/oacb-release`
+- `ghcr.io/sigtom/oacb-release-nginx`
 
-The check is structural; repository-specific tests remain owned by each generated repository.
+Use the **two immutable digests from one release manifest**, not `latest` or a mixed pair. Public image pulls will not require a GitHub token. Once the release bundle is published, you will not need an application-source checkout to deploy it.
+
+## Customer data and access
+
+OACB is designed for an operator-controlled network. It has no built-in user accounts or role-based access; deploy it behind HTTPS and choose the appropriate network access policy. Inputs and generated installer workspaces are temporary, so download the artifacts you need before ending the session.
+
+Never publish pull secrets, BMC credentials, customer YAML, certificates, generated ISOs, kubeconfigs, or installer state in this repository. Use sanitized descriptions for questions and reports.
+
+OACB is an independent project. It does not replace Red Hat’s installation prerequisites or support policies, and no Red Hat endorsement is implied.
+
+For security concerns, follow the [private reporting instructions](SECURITY.md).
