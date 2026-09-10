@@ -63,7 +63,35 @@ A release will supply a deployment archive, its extraction helper, and a release
 
 Verify the helper and archive checksums against the independently trusted release record, then use the helper’s `extract` command to create the deployment directory. The packaged receipt allows the included tools to verify protected deployment files without a Git checkout. Work from the extracted `deploy/portable` directory.
 
-The connected reference path uses Docker Compose v2; offline image transfer requires Podman on both staging and target hosts. The target needs Linux AMD64, OpenSSL, a compatible Compose implementation, and sufficient memory and disk space for the application, images, and optional ISO workspaces.
+Use Docker with Docker Compose for online pulls, or rootful Podman with the Docker Compose provider below for online or offline deployment. The target needs Linux AMD64, OpenSSL, curl, standard tar/SHA-256 utilities, and enough memory and disk space for the images and optional ISO workspaces. Select one engine in the shell used throughout this guide:
+
+```sh
+export OACB_CONTAINER_ENGINE=docker
+docker compose version
+```
+
+For Podman, use the distribution's rootful engine and the official [Docker Compose v5.5.1 Linux AMD64 binary](https://github.com/docker/compose/releases/download/v5.5.1/docker-compose-linux-x86_64). The Python `podman-compose` implementation through 1.6.0 lacks commands required by the packaged helpers. Download and transfer the provider before isolation; also install or bring the distribution's Podman packages and runtime/network dependencies, OpenSSL, curl and standard utilities. OACB's image archives do not include these host tools; Docker Engine and Python packages are not needed for this provider.
+
+In a root shell on the target, verify the transferred binary, install it, and select the local [Podman Unix socket](https://docs.podman.io/en/v4.9.0/markdown/podman-system-service.1.html):
+
+```sh
+sudo -i
+printf '%s  %s\n' \
+  'db1889184726840f75c4f9c001048430d4f25b3be3cb084d3ddd762bc0aed576' \
+  '/protected/transfer/docker-compose-linux-x86_64' | sha256sum --check - || exit 1
+install -D -m 0755 /protected/transfer/docker-compose-linux-x86_64 \
+  /usr/local/lib/oacb/docker-compose
+systemctl start podman.socket
+unset DOCKER_CONTEXT DOCKER_TLS DOCKER_TLS_VERIFY DOCKER_CERT_PATH DOCKER_API_VERSION
+unset CONTAINER_HOST CONTAINER_CONNECTION
+export OACB_CONTAINER_ENGINE=podman
+export PODMAN_COMPOSE_PROVIDER=/usr/local/lib/oacb/docker-compose
+export DOCKER_HOST=unix:///run/podman/podman.sock
+podman compose version
+cd /absolute/path/to/deploy/portable
+```
+
+Keep this root shell and environment for loading images, TLS helpers, startup, checks and renewal. Mixing a rootless image load with the rootful socket selects different image stores. Keep the Unix socket restricted to its administrator; do not expose it over TCP or mount it in OACB containers. The packaged guide covers reboot/renewal setup. Check each release's acceptance notes for the host/provider combinations actually verified; the provider pin alone is not native acceptance.
 
 Create candidate settings and private runtime directories:
 
@@ -107,16 +135,16 @@ The included TLS helper also supports generating a CSR for the customer’s PKI 
 With complete manifest values in `.env.candidate`, pull the public pair anonymously:
 
 ```sh
-export OACB_CONTAINER_ENGINE=docker
-./bin/validate-release
+../bin/oacb-image-release validate
 ../bin/oacb-image-release pull
+./bin/validate-release
 
-docker compose --project-directory "$PWD" --env-file "$OACB_RELEASE_ENV_FILE" \
+"$OACB_CONTAINER_ENGINE" compose --project-directory "$PWD" --env-file "$OACB_RELEASE_ENV_FILE" \
   --file "$PWD/compose.yaml" --profile tls-tools run --rm --no-deps tls-tool validate
 ../bin/oacb-image-release inspect
-docker compose --project-directory "$PWD" --env-file "$OACB_RELEASE_ENV_FILE" \
+"$OACB_CONTAINER_ENGINE" compose --project-directory "$PWD" --env-file "$OACB_RELEASE_ENV_FILE" \
   --file "$PWD/compose.yaml" up --detach --no-deps app proxy
-docker compose --project-directory "$PWD" --env-file "$OACB_RELEASE_ENV_FILE" \
+"$OACB_CONTAINER_ENGINE" compose --project-directory "$PWD" --env-file "$OACB_RELEASE_ENV_FILE" \
   --file "$PWD/compose.yaml" ps
 ```
 
@@ -132,7 +160,7 @@ For an update, preserve the previous settings and complete image pair before sta
 
 ### Transfer OACB to an offline network
 
-On a connected staging host with Podman and the same verified deployment files and manifest values:
+On a connected staging host with Podman and the same verified deployment files and manifest values, use the rootful engine consistently:
 
 ```sh
 export OACB_CONTAINER_ENGINE=podman
@@ -146,7 +174,7 @@ OACB_RELEASE_ENV_FILE="$PWD/.env.candidate" \
 
 Export uses a pinned Skopeo helper image and therefore also needs staging-host access to that helper image. Public OACB packages need no registry credentials. Transfer the deployment bundle, both OCI archives, and `SHA256SUMS` through the customer’s approved path. Independently record the two archive hashes; a checksum file traveling with the archives is not proof of approval.
 
-On the isolated Podman target, configure the same release settings and load the transferred archives with those independently recorded hashes:
+On the isolated target, complete the rootful Podman/provider setup above, configure the same release settings, and load the transferred archives in that same root shell with the independently recorded hashes:
 
 ```sh
 OACB_CONTAINER_ENGINE=podman \
@@ -154,9 +182,10 @@ OACB_RELEASE_ENV_FILE="$PWD/.env.candidate" \
   ../bin/oacb-image-release load \
   offline/app.oci.tar '<recorded-app-archive-sha256>' \
   offline/nginx.oci.tar '<recorded-proxy-archive-sha256>'
+./bin/validate-release
 ```
 
-The helper validates both archives before importing into the target image store. Use the packaged Podman Compose deployment instructions for TLS validation, startup, and readback. Docker-only offline import is not a supported MVP path.
+The helper validates both archives before importing into the target image store. With `OACB_CONTAINER_ENGINE=podman` and the provider/socket exports still set, run the TLS validation, image inspection and Compose startup commands from the online section, skipping its pull command. Follow the packaged guide for complete readback and rollback. Docker-only offline import is not a supported MVP path.
 
 This transfers **OACB**, not the OpenShift release payload. A disconnected OpenShift installation still needs its own mirrored content, appropriate pull credentials, trust configuration, and customer network prerequisites. Configure those inputs in OACB and review them with the installation team.
 
