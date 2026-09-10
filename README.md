@@ -25,6 +25,8 @@ Successful YAML validation does not prove that the customer’s DNS, switches, d
 
 Start with the [field guide for Red Hat architects and senior consultants](docs/architects-and-consultants.md) for engagement planning, design review and customer handoff. Use the [engagement worksheet](docs/engagement-worksheet.md) to collect decisions and assign unresolved prerequisites.
 
+Use the [fictional workshop values](docs/example-values.md) for connected, proxy/trust, and disconnected design walkthroughs. They are schematic inputs, not validated installation outputs.
+
 The [usage guide](docs/usage.md) covers the operator steps: YAML-only preparation, optional ISO creation, and connected or offline deployment.
 
 Each packaged release is intended to include the deployment files, verification helper, checksums, and a manifest identifying the matching images:

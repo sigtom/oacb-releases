@@ -123,7 +123,8 @@ operations visible as separate deliverables.
 
 ## Demonstrate it to a colleague
 
-Start with a fictional three-node design. Show manual entry with BMC fields
+Start with the [fictional workshop values](example-values.md) for a three-node
+connected, proxy/trust or disconnected design. Show manual entry with BMC fields
 empty, native validation, review of both YAML files, and the protected download
 step. Then explain where optional discovery and ISO/BMC actions fit. If no
 approved runtime or release is available, walk through the design and guide
