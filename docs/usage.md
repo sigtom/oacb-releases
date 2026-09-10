@@ -59,7 +59,9 @@ YAML generation and workstation ISO creation remain available when this BMC path
 
 ## Deploy a packaged release
 
-A release will supply a deployment archive, its extraction helper, and a release manifest with checksums and the matching app/proxy image digests. Follow that version’s asset names and checksums. Do not substitute a repository source ZIP, an arbitrary image tag, or files from another release.
+A [versioned release](https://github.com/sigtom/oacb-releases/releases) supplies a deployment archive, its extraction helper, and a release manifest with checksums and the matching app/proxy image digests. Follow that version’s asset names and checksums. Do not substitute a repository source ZIP, an arbitrary image tag, or files from another release.
+
+For disconnected deployment, download the complete release asset set. Verify `SHA256SUMS` against its hash in the trusted release notes, verify the listed files, then follow the attached `README.md` for offline import and startup. The package contains OACB, not a customer OpenShift payload mirror or pull secret.
 
 Verify the helper and archive checksums against the independently trusted release record, then use the helper’s `extract` command to create the deployment directory. The packaged receipt allows the included tools to verify protected deployment files without a Git checkout. Work from the extracted `deploy/portable` directory.
 
