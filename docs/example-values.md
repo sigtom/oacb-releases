@@ -5,10 +5,8 @@ They are **schematic form inputs, not validated installer YAML or a deployable
 cluster**. Addresses, domains, interface identities and disk serials are fictional.
 They have not passed native installer or installation acceptance as a set.
 
-The first public packaged release is still being prepared. These examples do not
-imply that downloadable assets or public images are available. See the
-[README](../README.md) for availability and the
-[field guide](architects-and-consultants.md) for engagement workflow.
+Use the [quickstart](usage.md) to run OACB, or see the
+[field guide](architects-and-consultants.md) for a customer engagement workflow.
 
 ## Shared three-node design
 

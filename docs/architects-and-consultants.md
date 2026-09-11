@@ -11,8 +11,9 @@ operations. It does not replace architecture decisions, customer infrastructure
 preparation, or an engagement's change and acceptance process. Existing Ansible
 and site automation can remain responsible for those tasks.
 
-The first public packaged release is being prepared. See the [README](../README.md)
-for release availability and current coverage before planning a customer build.
+The [public release](https://github.com/sigtom/oacb-releases/releases/latest)
+includes runnable containers, an offline bundle and editable source. See the
+[README](../README.md) for current coverage before planning a customer build.
 This is an independent project, not a statement of Red Hat product support or
 endorsement.
 
@@ -68,7 +69,8 @@ not an engagement record or a backup.
 6. Download the deployable bundle into protected storage. Record the selected
    OACB release, matching installer version, review date and remaining prerequisites.
 
-The [usage guide](usage.md) contains the operator steps and installer commands.
+The [quickstart](usage.md) covers YAML generation. The
+[installation guide](installing-clusters.md) contains the installer commands.
 Do not use redacted review examples as installation inputs.
 
 ## Explain what validation proves
